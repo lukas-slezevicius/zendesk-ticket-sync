@@ -76,6 +76,10 @@ export async function syncZendeskTickets(tenant: ZendeskTenant): Promise<void> {
 
   let processed = 0;
   try {
+    // Velocity note: a busy tenant bumps 5-10 pages' worth of tickets per
+    // minute (every reply and status change touches updated_at), so by the
+    // time a pass finishes one page, several new pages of updates typically
+    // exist already — the window keeps moving while we walk it.
     let page = 1;
     let hasMore = true;
     while (hasMore) {

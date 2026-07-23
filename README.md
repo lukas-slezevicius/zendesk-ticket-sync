@@ -79,6 +79,11 @@ the end state is below.
   Zendesk account, and their data lives in the same database.
 - `zendesk_tickets`, `conversations`, and `messages` are **hot production
   tables with millions of rows** and constant write traffic.
+- Volume is high: a busy tenant produces **5-10 pages of freshly-updated
+  tickets per minute** (every reply and status change bumps `updated_at`).
+- Zendesk's updated-tickets endpoint serves **only the first 100 pages** of a
+  query — tickets further behind the `updated_after` cursor than that are
+  unreachable until the cursor advances.
 - Migrations run **sequentially inside a transaction on service startup**.
 - Queries go through **Kysely**, a type-safe SQL query builder. The `db`
   instance in `src/db.ts` is built with a stub driver so this PoC type-checks
