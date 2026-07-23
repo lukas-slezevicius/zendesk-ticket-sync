@@ -90,6 +90,13 @@ the end state is below.
   (`fetchTicketDetail`) — but the updated-tickets feed is the *only* way to
   learn **which** tickets changed. For us, handling a ticket hours late is
   always better than never learning it changed at all.
+- Missing a ticket is a **critical failure**, not a slow path. Our AI can only
+  respond to a customer once their ticket exists as a conversation in our
+  system. If a ticket slips past the 100-page window before we capture it —
+  for any reason, on any run — we will never see it again unless the customer
+  happens to update it. That is a customer who never got answered: lost
+  revenue, and a client who relied on us to respond. So the system must
+  reliably capture **every** ticket it can, on **every** run.
 - Migrations run **sequentially inside a transaction on service startup**.
 - Queries go through **Kysely**, a type-safe SQL query builder. The `db`
   instance in `src/db.ts` is built with a stub driver so this PoC type-checks

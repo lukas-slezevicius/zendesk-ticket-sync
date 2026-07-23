@@ -66,6 +66,9 @@ export class ZendeskApiClient {
     return { tickets: body.tickets, hasMore: body.meta.hasMore };
   }
 
+  // Zendesk allows at most ~500 requests/minute per account to the ticket
+  // detail + comments endpoints; over that it returns 429. This budget is
+  // shared across everything the account does — one detail request per ticket.
   async fetchTicketDetail(ticketId: number): Promise<DetailedZendeskTicket> {
     const body = await this.request<TicketDetailResponse>(`/tickets/${ticketId}?include=comments`);
     return { ...body.ticket, comments: body.comments };
