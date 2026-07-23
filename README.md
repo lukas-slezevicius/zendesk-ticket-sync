@@ -62,7 +62,8 @@ file, talk through:
 - **What does it do?**
 - **Is anything buggy, unsafe, or surprising?**
 - **What happens when things go wrong** — a crash mid-run, a run that takes
-  longer than expected, a flaky network, a restart?
+  longer than expected, a flaky network, a restart? How long an outage — ours
+  or Zendesk's — can this design survive without permanently losing tickets?
 - **Would you ship it as-is?** If not, what has to change first?
 - **How would you design it better?**
 
@@ -83,7 +84,12 @@ the end state is below.
   tickets per minute** (every reply and status change bumps `updated_at`).
 - Zendesk's updated-tickets endpoint serves **only the first 100 pages** of a
   query — tickets further behind the `updated_after` cursor than that are
-  unreachable until the cursor advances.
+  unreachable until the cursor advances. Do the math against the velocity
+  above: for a busy tenant that window is only **~10-20 minutes deep**.
+- An individual ticket can always be fetched by id, at any time
+  (`fetchTicketDetail`) — but the updated-tickets feed is the *only* way to
+  learn **which** tickets changed. For us, handling a ticket hours late is
+  always better than never learning it changed at all.
 - Migrations run **sequentially inside a transaction on service startup**.
 - Queries go through **Kysely**, a type-safe SQL query builder. The `db`
   instance in `src/db.ts` is built with a stub driver so this PoC type-checks
