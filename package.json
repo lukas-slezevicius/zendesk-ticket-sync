@@ -1,0 +1,15 @@
+{
+  "name": "zendesk-ticket-sync",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PoC: sync Zendesk tickets into local conversations",
+  "type": "module",
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "kysely": "^0.27.3",
+    "typescript": "^5.4.5"
+  }
+}
